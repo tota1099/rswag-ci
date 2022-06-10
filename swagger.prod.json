@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "RD Station Marketing API - Example 2",
+    "title": "RD Station Marketing API ",
     "version": "v2"
   },
   "servers": [
@@ -62,7 +62,7 @@
   "paths": {
     "/platform/analytics/channels": {
       "get": {
-        "summary": "Retorna dados de visitas, conversões, oportunidades e vendas geradas por canal de origem.",
+        "summary": "Consultar canais",
         "tags": [
           "Análise de canais"
         ],
