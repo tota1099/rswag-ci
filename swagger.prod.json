@@ -1,0 +1,4543 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "RD Station Marketing API - Example 2",
+    "version": "v2"
+  },
+  "servers": [
+    {
+      "url": "api.rd.services"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "unauthorized_object": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "object",
+            "properties": {
+              "error_type": {
+                "type": "string"
+              },
+              "error_message": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "error_type": "UNAUTHORIZED",
+              "error_message": "Invalid token."
+            }
+          }
+        }
+      },
+      "not_found_object": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "object",
+            "properties": {
+              "error_type": {
+                "type": "string"
+              },
+              "error_message": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "error_type": "RESOURCE_NOT_FOUND",
+              "error_message": "the resource couldn't be found"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "rdsmapi_auth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "paths": {
+    "/platform/analytics/channels": {
+      "get": {
+        "summary": "Retorna dados de visitas, conversões, oportunidades e vendas geradas por canal de origem.",
+        "tags": [
+          "Análise de canais"
+        ],
+        "description": "Fornece os dados estatísticos relativos às visitas, conversões, oportunidades e vendas segregadas por canal de origem, para que você possa analisar a performance dos canais  de mídias digitais em uma conta do RD Station",
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "integer",
+                      "description": "O id associado a cada conta do RD Station"
+                    },
+                    "query_date": {
+                      "type": "object",
+                      "description": "O período de tempo usado para buscar os dados",
+                      "properties": {
+                        "start_date": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "end_date": {
+                          "type": "string",
+                          "format": "date"
+                        }
+                      }
+                    },
+                    "channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "channel_name": {
+                            "type": "string",
+                            "description": "Nome do canal. Os canais disponíveis são: Display, Referências, Busca Orgânica, Mídia Paga, Outros canais, Email, Redes Sociais, Outras publicidades e Tráfego Direto"
+                          },
+                          "visits_count": {
+                            "type": "integer",
+                            "description": "Total de visitantes do canal de origem"
+                          },
+                          "conversions_count": {
+                            "type": "integer",
+                            "description": "Total de conversões do canal de origem"
+                          },
+                          "opportunities_count": {
+                            "type": "integer",
+                            "description": "Total de oportunidades do canal de origem"
+                          },
+                          "sales_count": {
+                            "type": "integer",
+                            "description": "Total de vendas do canal de origem"
+                          }
+                        },
+                        "required": [
+                          "channel_name",
+                          "visits_count",
+                          "conversions_count",
+                          "opportunities_count",
+                          "sales_count"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "end_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/analytics/conversions": {
+      "get": {
+        "summary": "Retorna dados de estatísticos de conversões",
+        "tags": [
+          "Estatísticas de Conversões"
+        ],
+        "description": "Fornece os indicadores de conversões para ativos de marketing, podendo ser filtrado por tipo de ativo",
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assets_type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "integer",
+                      "description": "O id associado a cada conta do RD Station"
+                    },
+                    "query_date": {
+                      "type": "object",
+                      "description": "O período de tempo usado para buscar os dados",
+                      "properties": {
+                        "start_date": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "end_date": {
+                          "type": "string",
+                          "format": "date"
+                        }
+                      }
+                    },
+                    "assets_type": {
+                      "type": "string",
+                      "description": "Filtro para tipo do ativo, opções são: LandingPagePopup e Form. Requisições sem esse campo preenchido retornam conversões para todos os ativos"
+                    },
+                    "conversions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "asset_id": {
+                            "type": "integer",
+                            "description": "Id do evento de conversão"
+                          },
+                          "asset_identifier": {
+                            "type": "string",
+                            "description": "Identificador do evento de conversão"
+                          },
+                          "asset_type": {
+                            "type": "string",
+                            "description": "Tipo do evento de conversão"
+                          },
+                          "asset_created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Data de criação do evento"
+                          },
+                          "asset_updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Ultima atualização no evento"
+                          },
+                          "visits_count": {
+                            "type": "integer",
+                            "description": "Total de visitas no evento"
+                          },
+                          "conversions_count": {
+                            "type": "integer",
+                            "description": "Total conversões no evento"
+                          },
+                          "conversion_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de conversão no evento"
+                          }
+                        }
+                      },
+                      "required": [
+                        "account_id",
+                        "query_date",
+                        "assets_type",
+                        "asset_id",
+                        "asset_identifier",
+                        "asset_type",
+                        "asset_created_at",
+                        "asset_updated_at",
+                        "visits_count",
+                        "conversions_count",
+                        "conversion_rate"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "end_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/analytics/emails": {
+      "get": {
+        "summary": "Consultar Estatísticas de E-mail Marketing",
+        "tags": [
+          "Estatísticas de E-mail Marketing"
+        ],
+        "description": "O objetivo desta API é fornecer os indicadores de engajamento e performance das campanhas de Email Marketing enviadas no período consultado, que irão te auxiliar a analisar a eficiência das suas campanhas.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "description": "Data de início a ser consultada. (yyyy-mm-dd)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "description": "Data de término a ser consultada. (yyyy-mm-dd)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "integer",
+                      "description": "O id associado a cada conta do RD Station",
+                      "example": 1
+                    },
+                    "query_date": {
+                      "type": "object",
+                      "description": "O período de tempo usado para buscar os dados",
+                      "properties": {
+                        "start_date": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "end_date": {
+                          "type": "string",
+                          "format": "date"
+                        }
+                      }
+                    },
+                    "emails": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "campaign_id": {
+                            "type": "integer",
+                            "description": "Id da campanha",
+                            "example": 6061281
+                          },
+                          "campaign_name": {
+                            "type": "string",
+                            "description": "Nome da campanha de e-mail",
+                            "example": "Desconto"
+                          },
+                          "send_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Data de envio do e-mail",
+                            "example": "2021-08-06T17:26:39-03:00"
+                          },
+                          "contacts_count": {
+                            "type": "integer",
+                            "description": "Quantidade de contatos selecionados",
+                            "example": 1000
+                          },
+                          "email_dropped_count": {
+                            "type": "integer",
+                            "description": "Total de e-mails descartados",
+                            "example": 3
+                          },
+                          "email_delivered_count": {
+                            "type": "integer",
+                            "description": "Total de e-mails entregues",
+                            "example": 997
+                          },
+                          "email_bounced_count": {
+                            "type": "integer",
+                            "description": "Total de e-mails de rejeitados",
+                            "example": 5
+                          },
+                          "email_opened_count": {
+                            "type": "integer",
+                            "description": "Total de aberturas únicas por lead",
+                            "example": 500
+                          },
+                          "email_clicked_count": {
+                            "type": "integer",
+                            "description": "Total de cliques únicos por lead",
+                            "example": 500
+                          },
+                          "email_unsubscribed_count": {
+                            "type": "integer",
+                            "description": "Total não inscrito",
+                            "example": 4
+                          },
+                          "email_spam_reported_count": {
+                            "type": "integer",
+                            "description": "Total reportado como spam",
+                            "example": 1
+                          },
+                          "email_delivered_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de entrega",
+                            "example": 98.7
+                          },
+                          "email_opened_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de abertura em comparação com o número de e-mails entregues",
+                            "example": 46.9
+                          },
+                          "email_clicked_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de cliques em comparação com o número de e-mails entregues",
+                            "example": 36.5
+                          },
+                          "email_spam_reported_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de spam em comparação com o número de e-mails entregues",
+                            "example": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string",
+                                "example": "01-01-2022"
+                              }
+                            }
+                          },
+                          "end_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string",
+                                "example": "31-12-2022"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado ou proibido",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "errors": {
+                      "error_type": "UNAUTHORIZED",
+                      "error_message": "Invalid token."
+                    }
+                  },
+                  {
+                    "errors": {
+                      "error_type": "FORBIDDEN",
+                      "error_message": "You do not have access to this resource."
+                    }
+                  }
+                ],
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/analytics/funnel": {
+      "get": {
+        "summary": "Retorna os dados do funil de vendas do dia referência acumulado por mês.",
+        "tags": [
+          "Estatísticas de Funil (Agregado)"
+        ],
+        "description": "Fornece os dados funil de vendas com as quantidades de visitantes, leads, oportunidades e vendas cumulativo referente ao dia do mês consultado, a fim de trazer mais clareza com relação a performance do seu funil de vendas.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "integer",
+                      "description": "O id associado a cada conta do RD Station"
+                    },
+                    "query_date": {
+                      "type": "object",
+                      "description": "O período de tempo usado para buscar os dados",
+                      "properties": {
+                        "start_date": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "end_date": {
+                          "type": "string",
+                          "format": "date"
+                        }
+                      }
+                    },
+                    "funnel": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "reference_day": {
+                            "type": "string",
+                            "description": "Dia de referência do funil"
+                          },
+                          "visitors_count": {
+                            "type": "integer",
+                            "description": "Total de visitantes (usuários - GA)"
+                          },
+                          "contacts_count": {
+                            "type": "integer",
+                            "description": "Total de contatos"
+                          },
+                          "qualified_contacts_count": {
+                            "type": "integer",
+                            "description": "Total contatos qualificados"
+                          },
+                          "opportunities_count": {
+                            "type": "integer",
+                            "description": "Total de oportunidades"
+                          },
+                          "sales_count": {
+                            "type": "integer",
+                            "description": "Total de vendas"
+                          }
+                        },
+                        "required": [
+                          "reference_day",
+                          "visitors_count",
+                          "contacts_count",
+                          "qualified_contacts_count",
+                          "opportunities_count",
+                          "sales_count"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "end_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/analytics/workflow_email_statistics": {
+      "get": {
+        "summary": "Consultar Estatísticas de Email via Fluxo de Automação",
+        "tags": [
+          "Estatísticas de Email via Fluxo de Automação"
+        ],
+        "description": "O objetivo desta API é fornecer os indicadores de engajamento e performance dos emails enviados por meio de fluxos de automação no período consultado, que irão te auxiliar a analisar a eficiência dos seus fluxos e emails.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "description": "Data de início a ser consultada. (yyyy-mm-dd)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "description": "Data de término a ser consultada. (yyyy-mm-dd)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "integer",
+                      "description": "O id associado a cada conta do RD Station",
+                      "example": 1
+                    },
+                    "query_date": {
+                      "type": "object",
+                      "description": "O período de tempo usado para buscar os dados",
+                      "properties": {
+                        "start_date": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "end_date": {
+                          "type": "string",
+                          "format": "date"
+                        }
+                      }
+                    },
+                    "workflow_email_statistics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "workflow_id": {
+                            "type": "string",
+                            "description": "Id da automação",
+                            "example": "68e7aefe-d22d-11ec-9d64-0242ac120002"
+                          },
+                          "workflow_name": {
+                            "type": "string",
+                            "description": "Nome da automação",
+                            "example": "Qualified Leads"
+                          },
+                          "workflow_action_id": {
+                            "type": "string",
+                            "description": "Id do email de automação",
+                            "example": "7959d2da-d22d-11ec-9d64-0242ac120002"
+                          },
+                          "workflow_created_at": {
+                            "type": "string",
+                            "format": "date",
+                            "description": "Data de criação do fluxo",
+                            "example": "2022-01-01"
+                          },
+                          "workflow_updated_at": {
+                            "type": "string",
+                            "format": "date",
+                            "description": "Data da última atualização do fluxo",
+                            "example": "2022-01-25"
+                          },
+                          "email_name": {
+                            "type": "string",
+                            "description": "Nome da campanha enviada pela automação",
+                            "example": "Interesse Renovado"
+                          },
+                          "email_dropped_count": {
+                            "type": "integer",
+                            "description": "Total de e-mails descartados",
+                            "example": 10
+                          },
+                          "email_delivered_count": {
+                            "type": "integer",
+                            "description": "Total de e-mails entregues",
+                            "example": 477
+                          },
+                          "email_bounced_unique_count": {
+                            "type": "integer",
+                            "description": "Total de e-mails de rejeitados",
+                            "example": 2
+                          },
+                          "email_opened_unique_count": {
+                            "type": "integer",
+                            "description": "Total de aberturas únicas por lead",
+                            "example": 300
+                          },
+                          "email_clicked_unique_count": {
+                            "type": "integer",
+                            "description": "Total de cliques únicos por lead",
+                            "example": 75
+                          },
+                          "email_unsubscribed_count": {
+                            "type": "integer",
+                            "description": "Total não inscrito",
+                            "example": 2
+                          },
+                          "email_spam_reported_count": {
+                            "type": "integer",
+                            "description": "Total reportado como spam",
+                            "example": 0
+                          },
+                          "email_delivered_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de entrega",
+                            "example": 95.2
+                          },
+                          "email_opened_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de abertura em comparação com o número de e-mails entregues",
+                            "example": 50.2
+                          },
+                          "email_clicked_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de cliques em comparação com o número de e-mails entregues",
+                            "example": 15.1
+                          },
+                          "email_spam_reported_rate": {
+                            "type": "number",
+                            "format": "float",
+                            "description": "Taxa de spam em comparação com o número de e-mails entregues",
+                            "example": 0.0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string",
+                                "example": "01-01-2022"
+                              }
+                            }
+                          },
+                          "end_date": {
+                            "type": "object",
+                            "properties": {
+                              "invalid_date_format": {
+                                "type": "string",
+                                "example": "31-12-2022"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado ou proibido",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "errors": {
+                      "error_type": "UNAUTHORIZED",
+                      "error_message": "Invalid token."
+                    }
+                  },
+                  {
+                    "errors": {
+                      "error_type": "FORBIDDEN",
+                      "error_message": "You do not have access to this resource."
+                    }
+                  }
+                ],
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/contacts/{uuid}/events": {
+      "get": {
+        "summary": "Consultar eventos associado ao contato",
+        "tags": [
+          "Contatos"
+        ],
+        "description": "Retorna uma lista de eventos associados ao contato.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "O uuid exclusivo associado a cada contato do RD Station.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "event_type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CONVERSION",
+                "OPPORTUNITY"
+              ]
+            },
+            "required": true,
+            "description": "O tipo de evento que você deseja consultar (CONVERSION ou OPPORTUNITY)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "event_type": {
+                        "type": "string",
+                        "description": "O tipo de evento (CONVERSION ou OPPORTUNITY)",
+                        "example": "CONVERSION"
+                      },
+                      "event_family": {
+                        "type": "string",
+                        "example": "CDP",
+                        "description": "Identificador interno do RDSM"
+                      },
+                      "event_identifier": {
+                        "type": "string",
+                        "description": "Identificador do evento",
+                        "example": "Evento 2022"
+                      },
+                      "event_timestamp": {
+                        "type": "string",
+                        "description": "Data/hora de criação do evento, utilizando o formato UTC",
+                        "example": "2022-05-19T09:49:54.101-03:00"
+                      },
+                      "payload": {
+                        "type": "object",
+                        "description": "Dados do contato",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "description": "Nome do contato",
+                            "example": "João Silva"
+                          },
+                          "email": {
+                            "type": "string",
+                            "description": "Email do contato",
+                            "example": "joao@gmail.com"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorized_object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/not_found_object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/contacts/fields": {
+      "get": {
+        "summary": "Consultar campo personalizado",
+        "tags": [
+          "Campos personalizados"
+        ],
+        "description": "\n        Retorna os campos e seus atributos. Um campo pode ser default ou customizado:\n        - Default: campos padrões que representam as informações básicas do Contato do RD Station.\n        - Custom: campos que representam informações exclusivas do contato de acordo com sua organização e que foram criados pelos usuários do RD Station.\n      ",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string",
+                            "description": "O uuid exclusivo associado a cada campo do RD Station",
+                            "example": "fdeba6ec-f1cf-4b13-b2ea-e93d47c0d828"
+                          },
+                          "api_identifier": {
+                            "type": "string",
+                            "description": "Identificador exclusivo para referenciar este campo para chamadas de terminais do contato. O 'api identifier' de um campo não pode ser alterado posteriormente. Deve iniciar com o prefixo: cf_.",
+                            "example": "name"
+                          },
+                          "custom_field": {
+                            "type": "boolean",
+                            "description": "Ele é definido como 'false' para campos padrão e 'true' para campos personalizados.",
+                            "example": false
+                          },
+                          "data_type": {
+                            "type": "string",
+                            "description": "O tipo de dados do campo. Os valores possíveis são 'BOOLEAN', 'STRING', 'STRING[]' e 'INTEGER'.",
+                            "example": "STRING"
+                          },
+                          "name": {
+                            "type": "object",
+                            "description": "Nome do campo no RD Station",
+                            "properties": {
+                              "default": {
+                                "type": "string"
+                              },
+                              "pt-BR": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "label": {
+                            "type": "object",
+                            "description": "Label do campo nos formulários do RD Station",
+                            "properties": {
+                              "default": {
+                                "type": "string"
+                              },
+                              "pt-BR": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "presentation_type": {
+                            "type": "string",
+                            "description": "O tipo do campo",
+                            "enum": [
+                              "TEXT_INPUT",
+                              "EMAIL_INPUT",
+                              "COMBO_BOX",
+                              "URL_INPUT",
+                              "TEXT_AREA",
+                              "RADIO_BUTTON",
+                              "PHONE_INPUT",
+                              "NUMBER_INPUT",
+                              "CHECK_BOX",
+                              "MULTIPLE_CHOICE"
+                            ],
+                            "example": "TEXT_INPUT"
+                          },
+                          "validation_rules": {
+                            "type": "object",
+                            "description": "As regras de validação do campo.",
+                            "properties": {
+                              "valid_options": {
+                                "type": "array",
+                                "description": "Opções do campo",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "label": {
+                                      "type": "object",
+                                      "properties": {
+                                        "pt-BR": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "example": [
+                                  {
+                                    "value": "opcao_1",
+                                    "label": {
+                                      "pt-BR": "opcao_1"
+                                    }
+                                  },
+                                  {
+                                    "value": "opcao_2",
+                                    "label": {
+                                      "pt-BR": "opcao_2"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "error_type": "UNAUTHORIZED",
+                    "error_message": "Invalid token"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar campo personalizado",
+        "tags": [
+          "Campos personalizados"
+        ],
+        "description": "Criar campo personalizado.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "uuid": "fdeba6ec-f1cf-4b13-b2ea-e93d47c0d828",
+                  "name": {
+                    "pt-BR": "Meu campo customizado"
+                  },
+                  "label": {
+                    "pt-BR": "Selecione uma das opções"
+                  },
+                  "api_identifier": "cf_my_custom_field",
+                  "data_type": "STRING",
+                  "presentation_type": "COMBO_BOX",
+                  "validation_rules": {
+                    "valid_options": [
+                      {
+                        "value": "opcao_1",
+                        "label": {
+                          "pt-BR": "opcao_1"
+                        }
+                      },
+                      {
+                        "value": "opcao_2",
+                        "label": {
+                          "pt-BR": "opcao_2"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "description": "O uuid associado a cada campo do RD Station"
+                    },
+                    "api_identifier": {
+                      "type": "string",
+                      "description": "Identificador exclusivo para referenciar este campo para chamadas de terminais do contato. O 'api identifier' de um campo não pode ser alterado posteriormente. Deve iniciar com o prefixo: cf_.",
+                      "example": "name"
+                    },
+                    "custom_field": {
+                      "type": "boolean",
+                      "description": "Ele é definido como 'false' para campos padrão e 'true' para campos personalizados.",
+                      "example": false
+                    },
+                    "data_type": {
+                      "type": "string",
+                      "description": "O tipo de dados do campo. Os valores possíveis são 'BOOLEAN', 'STRING', 'STRING[]' e 'INTEGER'.",
+                      "example": "STRING"
+                    },
+                    "name": {
+                      "type": "object",
+                      "description": "Nome do campo no RD Station",
+                      "properties": {
+                        "default": {
+                          "type": "string"
+                        },
+                        "pt-BR": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "label": {
+                      "type": "object",
+                      "description": "Label do campo nos formulários do RD Station",
+                      "properties": {
+                        "default": {
+                          "type": "string"
+                        },
+                        "pt-BR": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "presentation_type": {
+                      "type": "string",
+                      "description": "O tipo do campo",
+                      "enum": [
+                        "TEXT_INPUT",
+                        "EMAIL_INPUT",
+                        "COMBO_BOX",
+                        "URL_INPUT",
+                        "TEXT_AREA",
+                        "RADIO_BUTTON",
+                        "PHONE_INPUT",
+                        "NUMBER_INPUT",
+                        "CHECK_BOX",
+                        "MULTIPLE_CHOICE"
+                      ],
+                      "example": "TEXT_INPUT"
+                    },
+                    "validation_rules": {
+                      "type": "object",
+                      "description": "As regras de validação do campo.",
+                      "properties": {
+                        "valid_options": {
+                          "type": "array",
+                          "description": "Opções do campo",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string"
+                              },
+                              "label": {
+                                "type": "object",
+                                "properties": {
+                                  "pt-BR": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "value": "opcao_1",
+                              "label": {
+                                "pt-BR": "opcao_1"
+                              }
+                            },
+                            {
+                              "value": "opcao_2",
+                              "label": {
+                                "pt-BR": "opcao_2"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "name": {
+                      "pt-BR": [
+                        {
+                          "error_type": "CANNOT_BE_BLANK",
+                          "error_message": "can not be blank"
+                        },
+                        {
+                          "error_type": "TAKEN",
+                          "error_message": "is already in use"
+                        },
+                        {
+                          "error_type": "EXCLUSION",
+                          "error_message": "is already in use"
+                        }
+                      ]
+                    },
+                    "label": {
+                      "pt-BR": [
+                        {
+                          "error_type": "CANNOT_BE_BLANK",
+                          "error_message": "can not be blank"
+                        },
+                        {
+                          "error_type": "TOO_LONG",
+                          "error_message": "is too long (maximum 1000 characters)"
+                        }
+                      ]
+                    },
+                    "api_identifier": [
+                      {
+                        "error_type": "INVALID",
+                        "error_message": "must have the prefix 'cf_' and it can only have lowercase alphanumerics and underscores"
+                      },
+                      {
+                        "error_type": "TOO_LONG",
+                        "error_message": "is too long (maximum 64 characters)"
+                      },
+                      {
+                        "error_type": "TAKEN",
+                        "error_message": "is already in use"
+                      }
+                    ],
+                    "data_type": [
+                      {
+                        "error_type": "INVALID",
+                        "error_message": "only supports [data_type] as data type"
+                      }
+                    ],
+                    "validation_rules": {
+                      "valid_options": [
+                        {
+                          "error_type": "TOO_SHORT",
+                          "error_message": "must be fulfilled for the chosen field type"
+                        },
+                        {
+                          "error_type": "INVALID",
+                          "error_message": "has repeated items"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "api_identifier": {
+                    "type": "string",
+                    "description": "Identificador exclusivo para referenciar este campo para chamadas de terminais do contato. O 'api_identifier' de um campo não pode ser alterado posteriormente",
+                    "example": "cf_meu_campo_personalizado"
+                  },
+                  "data_type": {
+                    "type": "string",
+                    "description": "Tipo de dados para o qual o valor do campo deve ser formatado",
+                    "enum": [
+                      "STRING",
+                      "INTEGER",
+                      "BOOLEAN",
+                      "STRING[]"
+                    ],
+                    "example": "STRING"
+                  },
+                  "name": {
+                    "type": "object",
+                    "description": "Nome do campo no RD Station",
+                    "properties": {
+                      "pt-BR": {
+                        "type": "string",
+                        "example": "Meu campo customizado"
+                      }
+                    }
+                  },
+                  "label": {
+                    "type": "object",
+                    "description": "Label do campo nos formulários do RD Station",
+                    "properties": {
+                      "pt-BR": {
+                        "type": "string",
+                        "example": "Selecione uma das opções"
+                      }
+                    }
+                  },
+                  "presentation_type": {
+                    "type": "string",
+                    "description": "O tipo do campo nos formulários",
+                    "enum": [
+                      "TEXT_INPUT",
+                      "EMAIL_INPUT",
+                      "COMBO_BOX",
+                      "URL_INPUT",
+                      "TEXT_AREA",
+                      "RADIO_BUTTON",
+                      "PHONE_INPUT",
+                      "NUMBER_INPUT",
+                      "CHECK_BOX",
+                      "MULTIPLE_CHOICE"
+                    ],
+                    "example": "COMBO_BOX"
+                  },
+                  "validation_rules": {
+                    "type": "object",
+                    "description": "As regras de validação do campo",
+                    "properties": {
+                      "valid_options": {
+                        "type": "array",
+                        "description": "Opções do campo",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "string"
+                            },
+                            "label": {
+                              "type": "object",
+                              "properties": {
+                                "pt-BR": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "example": [
+                          {
+                            "value": "opcao_1",
+                            "label": {
+                              "pt-BR": "opcao_1"
+                            }
+                          },
+                          {
+                            "value": "opcao_2",
+                            "label": {
+                              "pt-BR": "opcao_2"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "api_identifier",
+                  "data_type",
+                  "label",
+                  "name",
+                  "presentation_type"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/contacts/fields/{uuid}": {
+      "patch": {
+        "summary": "Atualizar campo personalizado",
+        "tags": [
+          "Campos personalizados"
+        ],
+        "description": "Atualizar campo personalizado.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "O uuid exclusivo associado a cada campo do RD Station.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "uuid": "fdeba6ec-f1cf-4b13-b2ea-e93d47c0d828",
+                  "name": {
+                    "pt-BR": "Meu campo customizado"
+                  },
+                  "label": {
+                    "pt-BR": "Selecione uma das opções"
+                  },
+                  "api_identifier": "cf_my_custom_field",
+                  "data_type": "STRING",
+                  "presentation_type": "COMBO_BOX",
+                  "validation_rules": {
+                    "valid_options": [
+                      {
+                        "value": "opcao_1",
+                        "label": {
+                          "pt-BR": "opcao_1"
+                        }
+                      },
+                      {
+                        "value": "opcao_2",
+                        "label": {
+                          "pt-BR": "opcao_2"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "description": "O uuid associado a cada campo do RD Station"
+                    },
+                    "api_identifier": {
+                      "type": "string",
+                      "description": "Identificador exclusivo para referenciar este campo para chamadas de terminais do contato. O 'api identifier' de um campo não pode ser alterado posteriormente. Deve iniciar com o prefixo: cf_.",
+                      "example": "name"
+                    },
+                    "custom_field": {
+                      "type": "boolean",
+                      "description": "Ele é definido como 'false' para campos padrão e 'true' para campos personalizados.",
+                      "example": false
+                    },
+                    "data_type": {
+                      "type": "string",
+                      "description": "O tipo de dados do campo. Os valores possíveis são 'BOOLEAN', 'STRING', 'STRING[]' e 'INTEGER'.",
+                      "example": "STRING"
+                    },
+                    "name": {
+                      "type": "object",
+                      "description": "Nome do campo no RD Station",
+                      "properties": {
+                        "default": {
+                          "type": "string"
+                        },
+                        "pt-BR": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "label": {
+                      "type": "object",
+                      "description": "Label do campo nos formulários do RD Station",
+                      "properties": {
+                        "default": {
+                          "type": "string"
+                        },
+                        "pt-BR": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "presentation_type": {
+                      "type": "string",
+                      "description": "O tipo do campo",
+                      "enum": [
+                        "TEXT_INPUT",
+                        "EMAIL_INPUT",
+                        "COMBO_BOX",
+                        "URL_INPUT",
+                        "TEXT_AREA",
+                        "RADIO_BUTTON",
+                        "PHONE_INPUT",
+                        "NUMBER_INPUT",
+                        "CHECK_BOX",
+                        "MULTIPLE_CHOICE"
+                      ],
+                      "example": "TEXT_INPUT"
+                    },
+                    "validation_rules": {
+                      "type": "object",
+                      "description": "As regras de validação do campo.",
+                      "properties": {
+                        "valid_options": {
+                          "type": "array",
+                          "description": "Opções do campo",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string"
+                              },
+                              "label": {
+                                "type": "object",
+                                "properties": {
+                                  "pt-BR": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "value": "opcao_1",
+                              "label": {
+                                "pt-BR": "opcao_1"
+                              }
+                            },
+                            {
+                              "value": "opcao_2",
+                              "label": {
+                                "pt-BR": "opcao_2"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "name": {
+                      "pt-BR": [
+                        {
+                          "error_type": "CANNOT_BE_BLANK",
+                          "error_message": "can not be blank"
+                        },
+                        {
+                          "error_type": "TAKEN",
+                          "error_message": "is already in use"
+                        },
+                        {
+                          "error_type": "EXCLUSION",
+                          "error_message": "is already in use"
+                        }
+                      ]
+                    },
+                    "label": {
+                      "pt-BR": [
+                        {
+                          "error_type": "CANNOT_BE_BLANK",
+                          "error_message": "can not be blank"
+                        },
+                        {
+                          "error_type": "TOO_LONG",
+                          "error_message": "is too long (maximum 1000 characters)"
+                        }
+                      ]
+                    },
+                    "data_type": [
+                      {
+                        "error_type": "INVALID",
+                        "error_message": "only supports [data_type] as data type"
+                      }
+                    ],
+                    "validation_rules": {
+                      "valid_options": [
+                        {
+                          "error_type": "TOO_SHORT",
+                          "error_message": "must be fulfilled for the chosen field type"
+                        },
+                        {
+                          "error_type": "INVALID",
+                          "error_message": "has repeated items"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data_type": {
+                    "type": "string",
+                    "description": "Tipo de dados para o qual o valor do campo deve ser formatado",
+                    "enum": [
+                      "STRING",
+                      "INTEGER",
+                      "BOOLEAN",
+                      "STRING[]"
+                    ]
+                  },
+                  "name": {
+                    "type": "object",
+                    "description": "Nome do campo no RD Station",
+                    "properties": {
+                      "pt-BR": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "label": {
+                    "type": "object",
+                    "description": "Label do campo nos formulários do RD Station",
+                    "properties": {
+                      "pt-BR": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "presentation_type": {
+                    "type": "string",
+                    "description": "O tipo do campo nos formulários",
+                    "enum": [
+                      "TEXT_INPUT",
+                      "EMAIL_INPUT",
+                      "COMBO_BOX",
+                      "URL_INPUT",
+                      "TEXT_AREA",
+                      "RADIO_BUTTON",
+                      "PHONE_INPUT",
+                      "NUMBER_INPUT",
+                      "CHECK_BOX",
+                      "MULTIPLE_CHOICE"
+                    ]
+                  },
+                  "validation_rules": {
+                    "type": "object",
+                    "properties": {
+                      "valid_options": {
+                        "type": "array",
+                        "description": "Opções do campo",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "string"
+                            },
+                            "label": {
+                              "type": "object",
+                              "properties": {
+                                "pt-BR": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "example": [
+                          {
+                            "value": "opcao_1",
+                            "label": {
+                              "pt-BR": "opcao_1"
+                            }
+                          },
+                          {
+                            "value": "opcao_2",
+                            "label": {
+                              "pt-BR": "opcao_2"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "description": "As regras de validação do campo."
+                  }
+                },
+                "required": [
+                  "data_type",
+                  "label",
+                  "name",
+                  "presentation_type"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Excluir campo personalizado",
+        "tags": [
+          "Campos personalizados"
+        ],
+        "description": "Excluir um campo personalizado.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "O uuid exclusivo associado a cada campo do RD Station.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "base": [
+                      {
+                        "error_type": "INVALID",
+                        "error_message": "a default field can not be changed"
+                      },
+                      {
+                        "error_type": "INVALID",
+                        "error_message": "this custom field is used in one of its segmentation lists"
+                      },
+                      {
+                        "error_type": "INVALID",
+                        "error_message": "this custom field is used in social conversion"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "error_type": "RESOURCE_NOT_FOUND",
+                    "error_message": "the resource couldn't be found"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/contacts/{identifier}:{value}/funnels/default": {
+      "get": {
+        "summary": "Consultar pelo UUID/email do contato",
+        "tags": [
+          "Funis de Contatos"
+        ],
+        "description": "Retorna uma lista de Funis associados ao contato.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "uuid",
+                "email"
+              ]
+            },
+            "description": "Identificador (uuid/email) associado a cada contato do RD Station.",
+            "required": true
+          },
+          {
+            "name": "value",
+            "in": "path",
+            "description": "Valor do identificador.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lifecycle_stage": {
+                      "type": "string",
+                      "description": "O estágio no funil ao qual o contato pertence. Opções válidas: 'Lead', 'Qualified Lead' e 'Client'",
+                      "example": "Client"
+                    },
+                    "opportunity": {
+                      "type": "boolean",
+                      "description": "Indica se o contato é uma oportunidade ou não no funil"
+                    },
+                    "contact_owner_email": {
+                      "type": "string",
+                      "description": "O e-mail do usuário responsável pelo contato",
+                      "example": "email@example.org"
+                    },
+                    "fit": {
+                      "type": "integer",
+                      "description": "A pontuação de ajuste do contato no funil atual",
+                      "example": 60
+                    },
+                    "interest": {
+                      "type": "integer",
+                      "description": "A pontuação de interesse do contato no funil atual",
+                      "example": 100
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar pelo UUID/email do contato",
+        "tags": [
+          "Funis de Contatos"
+        ],
+        "description": "Atualiza as informações do funil associado ao contato.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "uuid",
+                "email"
+              ]
+            },
+            "description": "Identificador (uuid/email) associado a cada contato do RD Station.",
+            "required": true
+          },
+          {
+            "name": "value",
+            "in": "path",
+            "description": "Valor do identificador.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lifecycle_stage": {
+                      "type": "string",
+                      "description": "O estágio no funil ao qual o contato pertence. Opções válidas: 'Lead', 'Qualified Lead' e 'Client'",
+                      "example": "Client"
+                    },
+                    "opportunity": {
+                      "type": "boolean",
+                      "description": "Indica se o contato é uma oportunidade ou não no funil"
+                    },
+                    "contact_owner_email": {
+                      "type": "string",
+                      "description": "O e-mail do usuário responsável pelo contato",
+                      "example": "email@example.org"
+                    },
+                    "fit": {
+                      "type": "integer",
+                      "description": "A pontuação de ajuste do contato no funil atual",
+                      "example": 60
+                    },
+                    "interest": {
+                      "type": "integer",
+                      "description": "A pontuação de interesse do contato no funil atual",
+                      "example": 100
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "lifecycle_stage": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "lifecycle_stage cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "lifecycle_stage must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "lifecycle_stage must less than or equal to 50"
+                            },
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for lifecycle_stage, the valid options are: 'Lead', 'Qualified Lead' and 'Client'"
+                            }
+                          ]
+                        },
+                        "opportunity": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "opportunity cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_BOOLEAN",
+                              "error_message": "opportunity must be boolean"
+                            }
+                          ]
+                        },
+                        "contact_owner_email": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "url must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "url must less than or equal to 100"
+                            },
+                            {
+                              "error_type": "INVALID_EMAIL_FORMAT",
+                              "error_message": "contact_owner_email has an invalid format"
+                            },
+                            {
+                              "error_type": "INVALID_USER",
+                              "error_message": "The user {user} was not found in your account."
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lifecycle_stage": {
+                    "type": "string",
+                    "description": "O estágio no funil ao qual o contato pertence. Opções válidas: 'Lead', 'Qualified Lead' e 'Client'",
+                    "example": "Client"
+                  },
+                  "opportunity": {
+                    "type": "boolean",
+                    "description": "Indica se o contato é uma oportunidade ou não no funil"
+                  },
+                  "contact_owner_email": {
+                    "type": "string",
+                    "description": "O e-mail do usuário responsável pelo contato. Pode ser definido como 'null' para desassociar o proprietário atual",
+                    "example": "email@example.org"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/contacts/{identifier}:{value}": {
+      "get": {
+        "summary": "Consultar contato pelo uuid/email",
+        "tags": [
+          "Contatos"
+        ],
+        "description": "Retorna dados de um contato específico.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "description": "Identificador (uuid/email) associado a cada contato do RD Station.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "uuid",
+                "email"
+              ]
+            },
+            "required": true
+          },
+          {
+            "name": "value",
+            "in": "path",
+            "description": "Valor do identificador.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "description": "O uuid associado a cada contato do RD Station",
+                      "example": "cdbba2a8-8ccd-4228-9617-6b0257b32077"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Nome do contato",
+                      "example": "RD Station Developer"
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "Email do contato",
+                      "example": "contato@exemplo.com"
+                    },
+                    "job_title": {
+                      "type": "string",
+                      "description": "Cargo do contato",
+                      "example": "Desenvolvedor"
+                    },
+                    "bio": {
+                      "type": "string",
+                      "description": "Anotações sobre o contato",
+                      "example": "Muito engajado"
+                    },
+                    "website": {
+                      "type": "string",
+                      "description": "Site do contato",
+                      "example": "https://site-contato.rdstation.com/"
+                    },
+                    "personal_phone": {
+                      "type": "string",
+                      "description": "Telefone do contato",
+                      "example": "+55 48 3037-3600"
+                    },
+                    "mobile_phone": {
+                      "type": "string",
+                      "description": "Telefone do contato",
+                      "example": "+55 48 3037-3600"
+                    },
+                    "city": {
+                      "type": "string",
+                      "description": "Cidade do contato",
+                      "example": "Florianópolis"
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "Estado do contato",
+                      "example": "SC"
+                    },
+                    "country": {
+                      "type": "string",
+                      "description": "País do contato",
+                      "example": "Brasil"
+                    },
+                    "twitter": {
+                      "type": "string",
+                      "description": "Twitter do contato",
+                      "example": "https://twitter.com/contato"
+                    },
+                    "facebook": {
+                      "type": "string",
+                      "description": "Facebook do contato",
+                      "example": "https://www.facebook.com/contato/"
+                    },
+                    "linkedin": {
+                      "type": "string",
+                      "description": "LinkedIn do contato",
+                      "example": "https://www.linkedin.com/in/contato/"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "description": "Tags do contato",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "developer",
+                        "rdstation",
+                        "api"
+                      ]
+                    },
+                    "extra_emails": {
+                      "type": "array",
+                      "description": "E-mails extras do contato",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "contact2@example.com"
+                      ]
+                    },
+                    "legal_bases": {
+                      "type": "array",
+                      "description": "Bases legais do contato",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "category": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "category": "communications",
+                          "type": "consent",
+                          "status": "granted"
+                        }
+                      ]
+                    },
+                    "links": {
+                      "type": "array",
+                      "description": "Lista de hiperlinks",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rel": {
+                            "type": "string"
+                          },
+                          "href": {
+                            "type": "string"
+                          },
+                          "media": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "rel": "SELF",
+                          "href": "https://api.rd.services/platform/contacts/uuid:cdbba2a8-8ccd-4228-9617-6b0257b32077",
+                          "media": "application/json",
+                          "type": "GET"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "error_type": "UNAUTHORIZED",
+                    "error_message": "Invalid token"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string",
+                          "description": "Tipo do erro",
+                          "example": "RESOURCE_NOT_FOUND"
+                        },
+                        "error_message": {
+                          "type": "string",
+                          "description": "Descrição detalhada do erro",
+                          "example": "The resource couldn't be found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Atualizar contato pelo uuid/email",
+        "tags": [
+          "Contatos"
+        ],
+        "description": "Atualizar um contato específico.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "description": "Identificador (uuid/email) associado a cada contato do RD Station.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "uuid",
+                "email"
+              ]
+            },
+            "required": true
+          },
+          {
+            "name": "value",
+            "in": "path",
+            "description": "Valor do identificador.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success by email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "description": "O uuid associado a cada contato do RD Station",
+                      "example": "cdbba2a8-8ccd-4228-9617-6b0257b32077"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Nome do contato",
+                      "example": "RD Station Developer"
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "Email do contato",
+                      "example": "contato@exemplo.com"
+                    },
+                    "job_title": {
+                      "type": "string",
+                      "description": "Cargo do contato",
+                      "example": "Desenvolvedor"
+                    },
+                    "bio": {
+                      "type": "string",
+                      "description": "Anotações sobre o contato",
+                      "example": "Muito engajado"
+                    },
+                    "website": {
+                      "type": "string",
+                      "description": "Site do contato",
+                      "example": "https://site-contato.rdstation.com/"
+                    },
+                    "personal_phone": {
+                      "type": "string",
+                      "description": "Telefone do contato",
+                      "example": "+55 48 3037-3600"
+                    },
+                    "mobile_phone": {
+                      "type": "string",
+                      "description": "Telefone do contato",
+                      "example": "+55 48 3037-3600"
+                    },
+                    "city": {
+                      "type": "string",
+                      "description": "Cidade do contato",
+                      "example": "Florianópolis"
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "Estado do contato",
+                      "example": "SC"
+                    },
+                    "country": {
+                      "type": "string",
+                      "description": "País do contato",
+                      "example": "Brasil"
+                    },
+                    "twitter": {
+                      "type": "string",
+                      "description": "Twitter do contato",
+                      "example": "https://twitter.com/contato"
+                    },
+                    "facebook": {
+                      "type": "string",
+                      "description": "Facebook do contato",
+                      "example": "https://www.facebook.com/contato/"
+                    },
+                    "linkedin": {
+                      "type": "string",
+                      "description": "LinkedIn do contato",
+                      "example": "https://www.linkedin.com/in/contato/"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "description": "Tags do contato",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "developer",
+                        "rdstation",
+                        "api"
+                      ]
+                    },
+                    "extra_emails": {
+                      "type": "array",
+                      "description": "E-mails extras do contato",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "contact2@example.com"
+                      ]
+                    },
+                    "legal_bases": {
+                      "type": "array",
+                      "description": "Bases legais do contato",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "category": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "category": "communications",
+                          "type": "consent",
+                          "status": "granted"
+                        }
+                      ]
+                    },
+                    "links": {
+                      "type": "array",
+                      "description": "Lista de hiperlinks",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rel": {
+                            "type": "string"
+                          },
+                          "href": {
+                            "type": "string"
+                          },
+                          "media": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "rel": "SELF",
+                          "href": "https://api.rd.services/platform/contacts/uuid:cdbba2a8-8ccd-4228-9617-6b0257b32077",
+                          "media": "application/json",
+                          "type": "GET"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "error_type": "UNAUTHORIZED",
+                    "error_message": "Invalid token"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string",
+                          "description": "Tipo do erro",
+                          "example": "RESOURCE_NOT_FOUND"
+                        },
+                        "error_message": {
+                          "type": "string",
+                          "description": "Descrição detalhada do erro",
+                          "example": "The resource couldn't be found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do contato",
+                    "example": "RD Station Developer"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email do contato",
+                    "example": "contato@exemplo.com"
+                  },
+                  "job_title": {
+                    "type": "string",
+                    "description": "Cargo do contato",
+                    "example": "Desenvolvedor"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "description": "Anotações sobre contato",
+                    "example": "Muito engajado"
+                  },
+                  "website": {
+                    "type": "string",
+                    "description": "Site do contato",
+                    "example": "https://site-contato.rdstation.com/"
+                  },
+                  "personal_phone": {
+                    "type": "string",
+                    "description": "Telefone do contato",
+                    "example": "+55 48 3037-3600"
+                  },
+                  "mobile_phone": {
+                    "type": "string",
+                    "description": "Telefone do contato",
+                    "example": "+55 48 3037-3600"
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "Cidade do contato",
+                    "example": "Florianópolis"
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "Estado do contato",
+                    "example": "SC"
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "País do contato",
+                    "example": "Brasil"
+                  },
+                  "twitter": {
+                    "type": "string",
+                    "description": "Twitter do contato",
+                    "example": "https://twitter.com/contato"
+                  },
+                  "facebook": {
+                    "type": "string",
+                    "description": "Facebook do contato",
+                    "example": "https://www.facebook.com/contato/"
+                  },
+                  "linkedin": {
+                    "type": "string",
+                    "description": "LinkedIn do contato",
+                    "example": "https://www.linkedin.com/in/contato/"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "Tags do contato",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "developer",
+                      "rdstation",
+                      "api"
+                    ]
+                  },
+                  "legal_bases": {
+                    "type": "array",
+                    "description": "Bases legais do contato",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "category": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "category": "communications",
+                        "type": "consent",
+                        "status": "granted"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Excluir contato pelo uuid/email",
+        "tags": [
+          "Contatos"
+        ],
+        "description": "Deleta um contato específico.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "description": "Identificador (uuid/email) associado a cada contato do RD Station.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "uuid",
+                "email"
+              ]
+            },
+            "required": true
+          },
+          {
+            "name": "value",
+            "in": "path",
+            "description": "Valor do identificador.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string",
+                          "description": "Tipo do erro",
+                          "example": "RESOURCE_NOT_FOUND"
+                        },
+                        "error_message": {
+                          "type": "string",
+                          "description": "Descrição detalhada do erro",
+                          "example": "The resource couldn't be found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/contacts/{identifier}:{value}/tag": {
+      "post": {
+        "summary": "Criar uma tag para o lead pelo uuid/email",
+        "tags": [
+          "Contatos"
+        ],
+        "security": [
+          {
+            "rdsmapi_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "description": "Identificador (uuid/email) associado a cada contato do RD Station.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "uuid",
+                "email"
+              ]
+            },
+            "required": true
+          },
+          {
+            "name": "value",
+            "in": "path",
+            "description": "Valor do identificador.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "tag created",
+            "content": {
+              "application/json": {
+                "example": {
+                  "uuid": "cdbba2a8-8ccd-4228-9617-6b0257b32077",
+                  "name": "RD Station Developer",
+                  "email": "contact@example.com",
+                  "job_title": "Developer",
+                  "bio": "This documentation explains the RD Station API.",
+                  "website": "https://developers.rdstation.com/",
+                  "linkedin": "rd_station",
+                  "personal_phone": "+55 48 3037-3600",
+                  "city": "Florianópolis",
+                  "state": "SC",
+                  "country": "Brasil",
+                  "tags": [
+                    "developer",
+                    "rdstation",
+                    "api"
+                  ],
+                  "extra_emails": [
+                    "contact2@example.com"
+                  ],
+                  "legal_bases": [
+                    {
+                      "category": "communications",
+                      "type": "consent",
+                      "status": "granted"
+                    }
+                  ]
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "job_title": {
+                      "type": "string"
+                    },
+                    "bio": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string"
+                    },
+                    "linkedin": {
+                      "type": "string"
+                    },
+                    "personal_phone": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "country": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "extra_emails": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "legal_bases": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "category": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "links": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rel": {
+                            "type": "string"
+                          },
+                          "href": {
+                            "type": "string"
+                          },
+                          "media": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "error_type": "UNAUTHORIZED",
+                    "error_message": "Invalid token"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string",
+                          "description": "Tipo do erro",
+                          "example": "RESOURCE_NOT_FOUND"
+                        },
+                        "error_message": {
+                          "type": "string",
+                          "description": "Descrição detalhada do erro",
+                          "example": "The resource couldn't be found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "description": "Tags para o contato",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "Primeiro contato"
+                    ]
+                  }
+                },
+                "required": [
+                  "tags"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/segmentations": {
+      "get": {
+        "summary": "Consultar segmentações",
+        "tags": [
+          "Segmentações"
+        ],
+        "description": "Retorna uma lista de segmentações.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "segmentations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "description": "Identificador único da segmentação",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Nome da segmentação",
+                            "example": "Todos os contatos da base"
+                          },
+                          "standard": {
+                            "type": "boolean",
+                            "description": "Informa se a segmentação é padrão para a plataforma assim que você cria uma conta no RDSM",
+                            "example": true
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "description": "Data de criação da segmentação",
+                            "example": "2021-09-24T14:14:04.510-03:00"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "description": "Data da última atualização da segmentação",
+                            "example": "2021-09-24T14:14:04.510-03:00"
+                          },
+                          "process_status": {
+                            "type": "string",
+                            "description": "Status do processo da segmentação",
+                            "example": "processed"
+                          },
+                          "links": {
+                            "type": "array",
+                            "description": "Lista de hiperlinks.",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "rel": {
+                                  "type": "string"
+                                },
+                                "href": {
+                                  "type": "string"
+                                },
+                                "media": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "example": [
+                              {
+                                "rel": "SELF",
+                                "href": "https://api.rd.services/platform/segmentations/1/contacts",
+                                "media": "application/json",
+                                "type": "GET"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      },
+                      "example": {
+                        "error_type": "UNAUTHORIZED",
+                        "error_message": "Invalid token."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/segmentations/{id}/contacts": {
+      "get": {
+        "summary": "Consultar contatos de uma segmentação",
+        "tags": [
+          "Segmentações"
+        ],
+        "description": "Retorna uma lista de contatos associados a uma segmentação.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador exclusivo da segmentação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "contacts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string",
+                            "description": "O uuid exclusivo associado a cada contato do RD Station.",
+                            "example": "5408c5a3-4711-4f2e-8d0b-13407a3e30f3"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Nome do contato",
+                            "example": "Lead Example 1"
+                          },
+                          "email": {
+                            "type": "string",
+                            "description": "Email do contato",
+                            "example": "leadexample1@example.com"
+                          },
+                          "last_conversion_date": {
+                            "type": "string",
+                            "description": "Data da última conversão do contato",
+                            "example": "2021-09-13T15:01:06.325-03:00"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "description": "Data de criação do contato",
+                            "example": "2021-09-13T15:01:06.325-03:00"
+                          },
+                          "links": {
+                            "type": "array",
+                            "description": "Lista de hiperlinks.",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "rel": {
+                                  "type": "string"
+                                },
+                                "href": {
+                                  "type": "string"
+                                },
+                                "media": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "example": [
+                              {
+                                "rel": "SELF",
+                                "href": "https://api.rd.services/platform/contacts/5408c5a3-4711-4f2e-8d0b-13407a3e30f3",
+                                "media": "application/json",
+                                "type": "GET"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      },
+                      "example": {
+                        "error_type": "UNAUTHORIZED",
+                        "error_message": "Invalid token."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string",
+                          "description": "Tipo do erro",
+                          "example": "RESOURCE_NOT_FOUND"
+                        },
+                        "error_message": {
+                          "type": "string",
+                          "description": "Descrição detalhada do erro",
+                          "example": "The resource couldn't be found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations": {
+      "get": {
+        "summary": "Listar todos os webhooks",
+        "tags": [
+          "Webhooks"
+        ],
+        "description": "Retorna uma lista com todas as assinaturas de webhook da sua conta.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "webhooks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string",
+                            "description": "O uuid exclusivo associado a cada assinatura de webhook do RD Station",
+                            "example": "5408c5a3-4711-4f2e-8d0b-13407a3e30f3"
+                          },
+                          "event_type": {
+                            "type": "string",
+                            "description": "O tipo de evento que aciona a solicitação de webhook",
+                            "example": "WEBHOOK.CONVERTED"
+                          },
+                          "event_identifiers": {
+                            "type": "array",
+                            "description": "Permite filtrar os identificadores do evento que aciona o webhook. Apenas para eventos 'WEBHOOK.CONVERTED'",
+                            "items": {
+                              "type": "string"
+                            },
+                            "example": [
+                              "newsletter"
+                            ]
+                          },
+                          "entity_type": {
+                            "type": "string",
+                            "description": "A entidade da assinatura do webhook",
+                            "example": "CONTACT"
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "A URL de destino do webhook",
+                            "example": "http://my-url.com"
+                          },
+                          "http_method": {
+                            "type": "string",
+                            "description": "O método http que o webhook acionará",
+                            "example": "POST"
+                          },
+                          "include_relations": {
+                            "type": "array",
+                            "description": "Quais itens adicionais serão fornecidos no payload do webhook",
+                            "items": {
+                              "type": "string"
+                            },
+                            "example": [
+                              "COMPANY",
+                              "CONTACT_FUNNEL"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      },
+                      "example": {
+                        "error_type": "UNAUTHORIZED",
+                        "error_message": "Invalid token."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar um webhook",
+        "tags": [
+          "Webhooks"
+        ],
+        "description": "Cria uma assinatura de webhook.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "description": "O uuid exclusivo associado a cada assinatura de webhook do RD Station",
+                      "example": "5408c5a3-4711-4f2e-8d0b-13407a3e30f3"
+                    },
+                    "event_type": {
+                      "type": "string",
+                      "description": "O tipo de evento que aciona a solicitação de webhook",
+                      "example": "WEBHOOK.CONVERTED"
+                    },
+                    "event_identifiers": {
+                      "type": "array",
+                      "description": "Permite filtrar os identificadores do evento que aciona o webhook. Apenas para eventos 'WEBHOOK.CONVERTED'",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "newsletter"
+                      ]
+                    },
+                    "entity_type": {
+                      "type": "string",
+                      "description": "A entidade da assinatura do webhook",
+                      "example": "CONTACT"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "A URL de destino do webhook",
+                      "example": "http://my-url.com"
+                    },
+                    "http_method": {
+                      "type": "string",
+                      "description": "O método http que o webhook acionará",
+                      "example": "POST"
+                    },
+                    "include_relations": {
+                      "type": "array",
+                      "description": "Quais itens adicionais serão fornecidos no payload do webhook",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "COMPANY",
+                        "CONTACT_FUNNEL"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "entity_type": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "entity_type cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "entity_type must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "entity_type must less than or equal to 50"
+                            },
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for entity_type, the valid options are: 'CONTACT'"
+                            }
+                          ]
+                        },
+                        "event_type": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "event_type cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "event_type must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "event_type must less than or equal to 50"
+                            },
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for event_type, the valid options are: WEBHOOK.CONVERTED, WEBHOOK.MARKED_OPPORTUNITY"
+                            }
+                          ]
+                        },
+                        "event_identifiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "MUST_BE_STRING_ARRAY",
+                              "error_message": "must be an array of strings"
+                            }
+                          ]
+                        },
+                        "url": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "url cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "url must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "url must less than or equal to 255"
+                            },
+                            {
+                              "error_type": "INVALID_URL",
+                              "error_message": "'<url>' is not a valid URL."
+                            }
+                          ]
+                        },
+                        "http_method": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "http_method cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "http_method must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "http_method must less than or equal to 15"
+                            },
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for http_method, the valid options are: POST"
+                            }
+                          ]
+                        },
+                        "include_relations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for include_relations, the valid options are: COMPANY, CONTACT_FUNNEL"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      },
+                      "example": {
+                        "error_type": "UNAUTHORIZED",
+                        "error_message": "Invalid token."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "event_type": {
+                    "type": "string",
+                    "description": "O tipo de evento que aciona a solicitação de webhook. Atualmente somente 'WEBHOOK.CONVERTED' ou 'WEBHOOK.MARKED_OPPORTUNITY' são suportados",
+                    "enum": [
+                      "WEBHOOK.CONVERTED",
+                      "WEBHOOK.MARKED_OPPORTUNITY"
+                    ]
+                  },
+                  "entity_type": {
+                    "type": "string",
+                    "description": "A entidade da assinatura do webhook. Por enquanto, 'CONTATO' é a única opção aceita",
+                    "enum": [
+                      "CONTACT"
+                    ]
+                  },
+                  "event_identifiers": {
+                    "type": "array",
+                    "description": "Os identificadores dos eventos que devem acionar o webhook. Apenas para eventos 'WEBHOOK.CONVERTED'",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "newsletter"
+                    ]
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "A URL de destino do webhook",
+                    "example": "http://my-url.com"
+                  },
+                  "http_method": {
+                    "type": "string",
+                    "description": "O método http que o webhook acionará. Atualmente, apenas o método 'POST' é suportado",
+                    "enum": [
+                      "POST"
+                    ]
+                  },
+                  "include_relations": {
+                    "type": "array",
+                    "description": "Quais itens adicionais serão fornecidos no payload do webhook. Apenas 'COMPANY' e 'CONTACT_FUNNEL' são opções válidas",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "COMPANY",
+                        "CONTACT_FUNNEL"
+                      ]
+                    },
+                    "example": [
+                      "COMPANY",
+                      "CONTACT_FUNNEL"
+                    ]
+                  }
+                },
+                "required": [
+                  "event_type",
+                  "entity_type",
+                  "url",
+                  "http_method"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations/{uuid}": {
+      "put": {
+        "summary": "Atualizar webhook pelo uuid",
+        "tags": [
+          "Webhooks"
+        ],
+        "description": "Atualiza uma assinatura de webhook.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "O uuid exclusivo associado a cada webhook do RD Station.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "description": "O uuid exclusivo associado a cada assinatura de webhook do RD Station",
+                      "example": "5408c5a3-4711-4f2e-8d0b-13407a3e30f3"
+                    },
+                    "event_type": {
+                      "type": "string",
+                      "description": "O tipo de evento que aciona a solicitação de webhook",
+                      "example": "WEBHOOK.CONVERTED"
+                    },
+                    "event_identifiers": {
+                      "type": "array",
+                      "description": "Permite filtrar os identificadores do evento que aciona o webhook. Apenas para eventos 'WEBHOOK.CONVERTED'",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "newsletter"
+                      ]
+                    },
+                    "entity_type": {
+                      "type": "string",
+                      "description": "A entidade da assinatura do webhook",
+                      "example": "CONTACT"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "A URL de destino do webhook",
+                      "example": "http://my-url.com"
+                    },
+                    "http_method": {
+                      "type": "string",
+                      "description": "O método http que o webhook acionará",
+                      "example": "POST"
+                    },
+                    "include_relations": {
+                      "type": "array",
+                      "description": "Quais itens adicionais serão fornecidos no payload do webhook",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "COMPANY",
+                        "CONTACT_FUNNEL"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "entity_type": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "entity_type cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "entity_type must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "entity_type must less than or equal to 50"
+                            },
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for entity_type, the valid options are: 'CONTACT'"
+                            }
+                          ]
+                        },
+                        "event_type": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "event_type cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "event_type must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "event_type must less than or equal to 50"
+                            },
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for event_type, the valid options are: WEBHOOK.CONVERTED, WEBHOOK.MARKED_OPPORTUNITY"
+                            }
+                          ]
+                        },
+                        "event_identifiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "MUST_BE_STRING_ARRAY",
+                              "error_message": "must be an array of strings"
+                            }
+                          ]
+                        },
+                        "url": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "url cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "url must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "url must less than or equal to 255"
+                            },
+                            {
+                              "error_type": "INVALID_URL",
+                              "error_message": "'<url>' is not a valid URL."
+                            }
+                          ]
+                        },
+                        "http_method": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "CANNOT_BE_NULL",
+                              "error_message": "http_method cannot be null"
+                            },
+                            {
+                              "error_type": "MUST_BE_STRING",
+                              "error_message": "http_method must be string"
+                            },
+                            {
+                              "error_type": "MUST_BE_LESS_THAN_OR_EQUAL",
+                              "error_message": "http_method must less than or equal to 15"
+                            },
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for http_method, the valid options are: POST"
+                            }
+                          ]
+                        },
+                        "include_relations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "error_type": {
+                                "type": "string"
+                              },
+                              "error_message": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "error_type": "MUST_BE_VALID_OPTION",
+                              "error_message": "invalid options for include_relations, the valid options are: COMPANY, CONTACT_FUNNEL"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string"
+                        },
+                        "error_message": {
+                          "type": "string"
+                        }
+                      },
+                      "example": {
+                        "error_type": "UNAUTHORIZED",
+                        "error_message": "Invalid token."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string",
+                          "description": "Tipo do erro",
+                          "example": "RESOURCE_NOT_FOUND"
+                        },
+                        "error_message": {
+                          "type": "string",
+                          "description": "Descrição detalhada do erro",
+                          "example": "The resource couldn't be found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "event_type": {
+                    "type": "string",
+                    "description": "O tipo de evento que aciona a solicitação de webhook. Atualmente somente 'WEBHOOK.CONVERTED' ou 'WEBHOOK.MARKED_OPPORTUNITY' são suportados",
+                    "enum": [
+                      "WEBHOOK.CONVERTED",
+                      "WEBHOOK.MARKED_OPPORTUNITY"
+                    ]
+                  },
+                  "entity_type": {
+                    "type": "string",
+                    "description": "A entidade da assinatura do webhook. Por enquanto, 'CONTATO' é a única opção aceita",
+                    "enum": [
+                      "CONTACT"
+                    ]
+                  },
+                  "event_identifiers": {
+                    "type": "array",
+                    "description": "Os identificadores dos eventos que devem acionar o webhook. Apenas para eventos 'WEBHOOK.CONVERTED'",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "newsletter"
+                    ]
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "A URL de destino do webhook",
+                    "example": "http://my-url.com"
+                  },
+                  "http_method": {
+                    "type": "string",
+                    "description": "O método http que o webhook acionará. Atualmente, apenas o método 'POST' é suportado",
+                    "enum": [
+                      "POST"
+                    ]
+                  },
+                  "include_relations": {
+                    "type": "array",
+                    "description": "Quais itens adicionais serão fornecidos no payload do webhook. Apenas 'COMPANY' e 'CONTACT_FUNNEL' são opções válidas",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "COMPANY",
+                        "CONTACT_FUNNEL"
+                      ]
+                    },
+                    "example": [
+                      "COMPANY",
+                      "CONTACT_FUNNEL"
+                    ]
+                  }
+                },
+                "required": [
+                  "event_type",
+                  "entity_type",
+                  "url",
+                  "http_method"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletar um webhook",
+        "tags": [
+          "Webhooks"
+        ],
+        "description": "Deleta uma assinatura de webhook da conta atual.",
+        "security": [
+          {
+            "rdsmapi_auth": [
+              "write:fields",
+              "read:fields"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "O uuid exclusivo associado a cada webhook do RD Station.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "no content"
+          },
+          "404": {
+            "description": "not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "error_type": {
+                          "type": "string",
+                          "description": "Tipo do erro",
+                          "example": "RESOURCE_NOT_FOUND"
+                        },
+                        "error_message": {
+                          "type": "string",
+                          "description": "Descrição detalhada do erro",
+                          "example": "The resource couldn't be found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
