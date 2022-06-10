@@ -62,7 +62,7 @@
   "paths": {
     "/platform/analytics/channels": {
       "get": {
-        "summary": "Consultar canais",
+        "summary": "Consultar canais - Testando com Hilderlan",
         "tags": [
           "Análise de canais"
         ],
