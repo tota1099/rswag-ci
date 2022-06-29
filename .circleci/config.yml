@@ -23,7 +23,7 @@ jobs:
     steps:
       - run:
           name: "Teste name"
-          command: "Teste now is working"
+          command: "echo Teste now is working"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
